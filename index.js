@@ -27,10 +27,16 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     const userCollection = client.db("techDB").collection("users");
+    const productCollection = client.db("techDB").collection("allProducts");
     const featuredProductsCollection = client.db("techDB").collection("featuredProducts");
 
-    app.get("/featuredProducts", async (req, res) => {
-      const cursor = featuredProductsCollection.find();
+    // app.get("/featuredProducts", async (req, res) => {
+    //   const cursor = featuredProductsCollection.find();
+    //   const result = await cursor.toArray();
+    //   res.send(result);
+    // });
+    app.get("/allProducts", async (req, res) => {
+      const cursor = productCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     });
@@ -51,7 +57,7 @@ async function run() {
           const productId = req.params.productId;
           const { upvotes } = req.body;
       
-          const result = await featuredProductsCollection.findOneAndUpdate(
+          const result = await productCollection.findOneAndUpdate(
             { _id: new ObjectId(productId) },
             { $set: { upvotes } },
             { returnDocument: 'after' } // Return the updated document
