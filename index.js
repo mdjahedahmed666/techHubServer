@@ -26,7 +26,34 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+    const userCollection = client.db("techDB").collection("users");
+    const featuredProductsCollection = client.db("techDB").collection("featuredProducts");
 
+    app.get("/featuredProducts", async (req, res) => {
+      const cursor = featuredProductsCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.post("/users", async (req, res) => {
+        const newUser = req.body;
+        const result = await userCollection.insertOne(newUser);
+        res.send(result);
+      });
+
+    //    //update
+    // app.put("/upvotes", async (req, res) => {
+    //   const options = { upsert: true };
+    //   const query = { _id: ObjectId(productId) }; // Assuming your MongoDB document uses _id as the identifier
+    //   const update = { $set: { upvotes: updatedVote } };
+  
+    //   const result = await featuredProductsCollection.updateOne(query, update);
+  
+    //   if (result.modifiedCount === 1) {
+    //     res.json({ success: true, message: "Upvotes updated successfully." });
+    //   } else {
+    //     res.status(404).json({ success: false, message: "Product not found." });
+    //   }});
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
