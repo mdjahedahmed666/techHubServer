@@ -35,25 +35,29 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/users", async (req, res) => {
+      const cursor = userCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     app.post("/users", async (req, res) => {
         const newUser = req.body;
         const result = await userCollection.insertOne(newUser);
         res.send(result);
       });
 
-    //    //update
-    // app.put("/upvotes", async (req, res) => {
-    //   const options = { upsert: true };
-    //   const query = { _id: ObjectId(productId) }; // Assuming your MongoDB document uses _id as the identifier
-    //   const update = { $set: { upvotes: updatedVote } };
-  
-    //   const result = await featuredProductsCollection.updateOne(query, update);
-  
-    //   if (result.modifiedCount === 1) {
-    //     res.json({ success: true, message: "Upvotes updated successfully." });
-    //   } else {
-    //     res.status(404).json({ success: false, message: "Product not found." });
-    //   }});
+      app.put('/upvotes/:productId', async (req, res) => {
+          const productId = req.params.productId;
+          const { upvotes } = req.body;
+      
+          const result = await featuredProductsCollection.findOneAndUpdate(
+            { _id: new ObjectId(productId) },
+            { $set: { upvotes } },
+            { returnDocument: 'after' } // Return the updated document
+          );
+          res.json({ success: true, upvotes });
+      });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
