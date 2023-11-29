@@ -27,9 +27,10 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     const userCollection = client.db("techDB").collection("users");
+    const subscribeCollection = client.db("techDB").collection("subscribe");
     const reviewCollection = client.db("techDB").collection("reviews");
     const productCollection = client.db("techDB").collection("allProducts");
-    const featuredProductsCollection = client.db("techDB").collection("featuredProducts");
+
 
     // app.get("/featuredProducts", async (req, res) => {
     //   const cursor = featuredProductsCollection.find();
@@ -48,6 +49,12 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/subscribe", async (req, res) => {
+      const cursor = subscribeCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     app.get("/review", async (req, res) => {
       const cursor = reviewCollection.find();
       const result = await cursor.toArray();
@@ -57,6 +64,11 @@ async function run() {
     app.post("/users", async (req, res) => {
         const newUser = req.body;
         const result = await userCollection.insertOne(newUser);
+        res.send(result);
+      });
+    app.post("/subscribe", async (req, res) => {
+        const newSubscribe = req.body;
+        const result = await subscribeCollection.insertOne(newSubscribe);
         res.send(result);
       });
 
